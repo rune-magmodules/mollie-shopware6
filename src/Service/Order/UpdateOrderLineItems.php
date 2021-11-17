@@ -4,7 +4,6 @@ namespace Kiener\MolliePayments\Service\Order;
 
 use Mollie\Api\Resources\Order;
 use Mollie\Api\Resources\OrderLine;
-use Mollie\Api\Types\OrderLineType;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 
@@ -15,28 +14,16 @@ class UpdateOrderLineItems
      */
     private $orderLineRepository;
 
-
-    /**
-     * @param EntityRepositoryInterface $orderLineRepository
-     */
     public function __construct(EntityRepositoryInterface $orderLineRepository)
     {
+
         $this->orderLineRepository = $orderLineRepository;
     }
 
-    /**
-     * @param Order $mollieOrder
-     * @param SalesChannelContext $salesChannelContext
-     */
     public function updateOrderLineItems(Order $mollieOrder, SalesChannelContext $salesChannelContext): void
     {
         /** @var OrderLine $orderLine */
         foreach ($mollieOrder->lines() as $orderLine) {
-
-            if ($orderLine->type === OrderLineType::TYPE_SHIPPING_FEE) {
-                continue;
-            }
-
             $shopwareLineItemId = (string)$orderLine->metadata->orderLineItemId ?? '';
 
             if (empty($shopwareLineItemId)) {
@@ -55,5 +42,4 @@ class UpdateOrderLineItems
             $this->orderLineRepository->update([$data], $salesChannelContext->getContext());
         }
     }
-
 }

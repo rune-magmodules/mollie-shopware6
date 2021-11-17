@@ -3,21 +3,17 @@
 namespace Kiener\MolliePayments\Service\MollieApi\Builder;
 
 use Kiener\MolliePayments\Handler\PaymentHandler;
-use Kiener\MolliePayments\Hydrator\MollieLineItemHydrator;
 use Kiener\MolliePayments\Service\LoggerService;
 use Kiener\MolliePayments\Service\MollieApi\MollieOrderCustomerEnricher;
 use Kiener\MolliePayments\Service\MollieApi\OrderDataExtractor;
-use Kiener\MolliePayments\Service\MollieApi\VerticalTaxLineItemFixer;
 use Kiener\MolliePayments\Service\SettingsService;
 use Kiener\MolliePayments\Service\WebhookBuilder\WebhookBuilder;
 use Kiener\MolliePayments\Setting\MollieSettingStruct;
-use Kiener\MolliePayments\Struct\MollieLineItem;
 use Shopware\Core\Checkout\Cart\Price\Struct\CartPrice;
 use Shopware\Core\Checkout\Order\Aggregate\OrderDelivery\OrderDeliveryCollection;
 use Shopware\Core\Checkout\Order\OrderEntity;
 use Shopware\Core\System\Locale\LocaleEntity;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
-use Shopware\Core\System\SalesChannel\SalesChannelDefinition;
 use Symfony\Component\Routing\RouterInterface;
 
 class MollieOrderBuilder
@@ -75,17 +71,6 @@ class MollieOrderBuilder
     private $webhookBuilder;
 
     /**
-     * @var VerticalTaxLineItemFixer
-     */
-    private $verticalTaxLineItemFixer;
-
-    /**
-     * @var MollieLineItemHydrator
-     */
-    private $mollieLineItemHydrator;
-
-
-    /**
      * @param SettingsService $settingsService
      * @param OrderDataExtractor $extractor
      * @param RouterInterface $router
@@ -95,10 +80,8 @@ class MollieOrderBuilder
      * @param MollieOrderCustomerEnricher $customerEnricher
      * @param LoggerService $loggerService
      * @param MollieShippingLineItemBuilder $shippingLineItemBuilder
-     * @param VerticalTaxLineItemFixer $verticalTaxLineItemFixer
-     * @param MollieLineItemHydrator $mollieLineItemHydrator
      */
-    public function __construct(SettingsService $settingsService, OrderDataExtractor $extractor, RouterInterface $router, MollieOrderPriceBuilder $priceBuilder, MollieLineItemBuilder $lineItemBuilder, MollieOrderAddressBuilder $addressBuilder, MollieOrderCustomerEnricher $customerEnricher, LoggerService $loggerService, MollieShippingLineItemBuilder $shippingLineItemBuilder, VerticalTaxLineItemFixer $verticalTaxLineItemFixer, MollieLineItemHydrator $mollieLineItemHydrator)
+    public function __construct(SettingsService $settingsService, OrderDataExtractor $extractor, RouterInterface $router, MollieOrderPriceBuilder $priceBuilder, MollieLineItemBuilder $lineItemBuilder, MollieOrderAddressBuilder $addressBuilder, MollieOrderCustomerEnricher $customerEnricher, LoggerService $loggerService, MollieShippingLineItemBuilder $shippingLineItemBuilder)
     {
         $this->settingsService = $settingsService;
         $this->loggerService = $loggerService;
@@ -109,24 +92,10 @@ class MollieOrderBuilder
         $this->addressBuilder = $addressBuilder;
         $this->customerEnricher = $customerEnricher;
         $this->shippingLineItemBuilder = $shippingLineItemBuilder;
-        $this->verticalTaxLineItemFixer = $verticalTaxLineItemFixer;
-        $this->mollieLineItemHydrator = $mollieLineItemHydrator;
 
         $this->webhookBuilder = new WebhookBuilder($router);
     }
 
-
-    /**
-     * @param OrderEntity $order
-     * @param string $transactionId
-     * @param string $paymentMethod
-     * @param string $returnUrl
-     * @param SalesChannelContext $salesChannelContext
-     * @param PaymentHandler|null $handler
-     * @param array $paymentData
-     * @return array
-     * @throws \Exception
-     */
     public function build(OrderEntity $order, string $transactionId, string $paymentMethod, string $returnUrl, SalesChannelContext $salesChannelContext, ?PaymentHandler $handler, array $paymentData = []): array
     {
         $customer = $this->extractor->extractCustomer($order, $salesChannelContext);
@@ -160,43 +129,21 @@ class MollieOrderBuilder
         $webhookUrl = $this->webhookBuilder->buildWebhook($transactionId);
         $orderData['webhookUrl'] = $webhookUrl;
         $orderData['payment']['webhookUrl'] = $webhookUrl;
+        $orderData['payment']['sequenceType'] = 'first';
 
-
-        $isVerticalTaxCalculation = $this->isVerticalTaxCalculation($salesChannelContext);
-
-
-        $lines = $this->lineItemBuilder->buildLineItems(
-            $order->getTaxStatus(),
-            $order->getNestedLineItems(),
-            $isVerticalTaxCalculation
-        );
-
+        $lines = $this->lineItemBuilder->buildLineItems($order->getTaxStatus(), $order->getNestedLineItems(), $order->getCurrency());
 
         $deliveries = $order->getDeliveries();
+        $shippingLineItems = [];
 
         if ($deliveries instanceof OrderDeliveryCollection) {
-
-            $shippingLineItems = $this->shippingLineItemBuilder->buildShippingLineItems(
-                $order->getTaxStatus(),
-                $deliveries,
-                $isVerticalTaxCalculation
-            );
-
-            /** @var MollieLineItem $shipping */
-            foreach ($shippingLineItems as $shipping) {
-                $lines->add($shipping);
-            }
+            $shippingLineItems = $this->shippingLineItemBuilder->buildShippingLineItems($order->getTaxStatus(), $deliveries, $order->getCurrency());
         }
 
-        if ($isVerticalTaxCalculation) {
-            $this->verticalTaxLineItemFixer->fixLineItems($lines, $salesChannelContext);
-        }
-
-        $orderData['lines'] = $this->mollieLineItemHydrator->hydrate($lines, $currency->getIsoCode());
+        $orderData['lines'] = array_merge($lines, $shippingLineItems);
 
         $orderData['billingAddress'] = $this->addressBuilder->build($customer->getEmail(), $customer->getDefaultBillingAddress());
         $orderData['shippingAddress'] = $this->addressBuilder->build($customer->getEmail(), $customer->getActiveShippingAddress());
-
 
         /** @var MollieSettingStruct $settings */
         $settings = $this->settingsService->getSettings($salesChannelContext->getSalesChannel()->getId());
@@ -207,6 +154,7 @@ class MollieOrderBuilder
         if ($dueDate !== null) {
             $orderData['expiresAt'] = $dueDate;
         }
+
 
 
         // add payment specific data
@@ -233,22 +181,7 @@ class MollieOrderBuilder
             ]
         );
 
+
         return $orderData;
     }
-
-    /**
-     * @param SalesChannelContext $salesChannelContext
-     * @return bool
-     */
-    private function isVerticalTaxCalculation(SalesChannelContext $salesChannelContext): bool
-    {
-        $salesChannel = $salesChannelContext->getSalesChannel();
-
-        if (!method_exists($salesChannel, 'getTaxCalculationType')) {
-            return false;
-        }
-
-        return $salesChannel->getTaxCalculationType() === SalesChannelDefinition::CALCULATION_TYPE_VERTICAL;
-    }
-
 }

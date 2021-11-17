@@ -12,5 +12,20 @@
       "VOUCHER_TYPE_VALUE_MEAL": "Mahlzeit",
       "VOUCHER_TYPE_VALUE_VOUCHER": "Geschenk"
     }
+  },
+  "mollie-subscription":  {
+    "card-title": "Abonnement",
+    "title": "Mollie-Abonnements",
+    "description": "Mit Mollie-Abonnements können Sie ganz einfach Abonnementprodukte erstellen und wiederkehrende Zahlungen im konfigurierten Intervall und Zeitraum planen.",
+    "days": "Tage",
+    "weeks": "Woche(n)",
+    "months": "Monat(e)",
+    "times": "Mal",
+    "infinite": "Unendlich",
+    "mollieSubscriptionProduct": "Ist das ein Abo-Produkt?",
+    "mollieSubscriptionIntervalAmount": "Zahlung wiederholen alle",
+    "mollieSubscriptionIntervalType": "Abonnement-Intervall-Typ",
+    "mollieSubscriptionRepetitionAmount": "Zahlung wiederholen",
+    "mollieSubscriptionRepetitionType": "Abonnement-Wiederholungstyp"
   }
 }

@@ -24,26 +24,12 @@ class LineItemPriceStruct
      */
     private $vatRate;
 
-    /**
-     * @var float
-     */
-    private $roundingRest;
-
-
-    /**
-     * @param float $unitPrice
-     * @param float $totalAmount
-     * @param float $vatAmount
-     * @param float $vatRate
-     * @param float $roundingRest
-     */
-    public function __construct(float $unitPrice, float $totalAmount, float $vatAmount, float $vatRate, float $roundingRest = 0.0)
+    public function __construct(float $unitPrice, float $totalAmount, float $vatAmount, float $vatRate)
     {
         $this->unitPrice = $unitPrice;
         $this->totalAmount = $totalAmount;
         $this->vatAmount = $vatAmount;
         $this->vatRate = $vatRate;
-        $this->roundingRest = $roundingRest;
     }
 
     /**
@@ -77,13 +63,4 @@ class LineItemPriceStruct
     {
         return $this->vatRate;
     }
-
-    /**
-     * @return float
-     */
-    public function getRoundingRest(): float
-    {
-        return $this->roundingRest;
-    }
-
 }

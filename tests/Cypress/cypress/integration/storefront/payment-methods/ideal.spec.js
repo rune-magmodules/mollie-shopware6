@@ -29,7 +29,7 @@ describe('iDEAL Issuers', () => {
 
             beforeEach(() => {
                 devices.setDevice(device);
-                configAction.setupShop(true, false, false);
+                configAction.setupShop(true, false);
                 session.resetBrowserSession();
             });
 

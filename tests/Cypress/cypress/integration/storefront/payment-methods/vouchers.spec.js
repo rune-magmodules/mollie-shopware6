@@ -34,7 +34,7 @@ describe('Voucher Payments', () => {
 
     before(function () {
         devices.setDevice(devices.getFirstDevice());
-        configAction.setupShop(true, false, false);
+        configAction.setupShop(true, false);
     })
 
     testDevices.forEach(device => {
@@ -71,7 +71,7 @@ describe('Voucher Payments', () => {
                     paymentAction.openPaymentsModal();
                 }
 
-                cy.contains('checkout-container', 'Voucher').should('not.exist');
+                cy.contains('Voucher').should('not.exist');
             })
 
             it('Voucher available for ECO products', () => {

@@ -121,10 +121,10 @@ trait OrderTrait
         return $lineItem;
     }
 
-    public function getOrderDelivery(string $id, float $taxAmount, float $taxRate, float $totalPrice): OrderDeliveryEntity
+    public function getOrderDelivery(float $taxAmount, float $taxRate, float $totalPrice): OrderDeliveryEntity
     {
         $delivery = new OrderDeliveryEntity();
-        $delivery->setId($id);
+        $delivery->setId(Uuid::randomHex());
 
         $calculatedTax = new CalculatedTax($taxAmount, $taxRate, $totalPrice);
         $taxes = new CalculatedTaxCollection([$calculatedTax]);
