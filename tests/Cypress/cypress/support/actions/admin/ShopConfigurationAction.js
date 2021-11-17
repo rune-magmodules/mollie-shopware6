@@ -17,9 +17,8 @@ export default class ShopConfigurationAction {
      *
      * @param mollieFailureMode
      * @param creditCardComponents
-     * @param applePayDirect
      */
-    setupShop(mollieFailureMode, creditCardComponents, applePayDirect) {
+    setupShop(mollieFailureMode, creditCardComponents) {
 
         this._activatePaymentMethods();
 
@@ -30,7 +29,7 @@ export default class ShopConfigurationAction {
         this.apiClient.get('/sales-channel').then(channels => {
             channels.forEach(channel => {
                 this._configureSalesChannel(channel.id);
-                this._configureMolliePlugin(channel.id, mollieFailureMode, creditCardComponents, applePayDirect);
+                this._configureMolliePlugin(channel.id, mollieFailureMode, creditCardComponents);
 
             });
         });
@@ -89,10 +88,9 @@ export default class ShopConfigurationAction {
      * @param channelId
      * @param mollieFailureMode
      * @param creditCardComponents
-     * @param applePayDirect
      * @private
      */
-    _configureMolliePlugin(channelId, mollieFailureMode, creditCardComponents, applePayDirect) {
+    _configureMolliePlugin(channelId, mollieFailureMode, creditCardComponents) {
         const data = {};
 
         data[channelId] = {
@@ -101,7 +99,7 @@ export default class ShopConfigurationAction {
             // ------------------------------------------------------------------
             "MolliePayments.config.shopwareFailedPayment": !mollieFailureMode,
             "MolliePayments.config.enableCreditCardComponents": creditCardComponents,
-            "MolliePayments.config.enableApplePayDirect": applePayDirect,
+            "MolliePayments.config.enableApplePayDirect": true,
             "MolliePayments.config.paymentMethodBankTransferDueDateDays": 2,
             "MolliePayments.config.orderLifetimeDays": 4,
             // ------------------------------------------------------------------

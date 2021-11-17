@@ -2,7 +2,6 @@
 
 namespace MolliePayments\Tests\Utils\Traits;
 
-use Kiener\MolliePayments\Hydrator\MollieLineItemHydrator;
 use Kiener\MolliePayments\Service\MollieApi\Builder\MollieLineItemBuilder;
 use Kiener\MolliePayments\Service\MollieApi\Builder\MollieOrderPriceBuilder;
 use Kiener\MolliePayments\Service\MollieApi\Builder\MollieShippingLineItemBuilder;
@@ -73,7 +72,7 @@ trait PaymentBuilderTrait
      * @param CurrencyEntity|null $currency
      * @return array<string,mixed>
      */
-    public function getExpectedLineItems(string $taxStatus, ?OrderLineItemCollection $lineItems = null, CurrencyEntity $currency): array
+    public function getExpectedLineItems(string $taxStatus, ?OrderLineItemCollection $lineItems = null, ?CurrencyEntity $currency = null): array
     {
         $expectedLineItems = [];
 
@@ -87,21 +86,17 @@ trait PaymentBuilderTrait
 
         /** @var OrderLineItemEntity $item */
         foreach ($lineItems as $item) {
-            $expectedLineItems = $mollieLineItemBuilder->buildLineItems($taxStatus, $lineItems, false);
+            $expectedLineItems = $mollieLineItemBuilder->buildLineItems($taxStatus, $lineItems, $currency);
         }
 
-        $hydrator = new MollieLineItemHydrator(new MollieOrderPriceBuilder());
-
-        return $hydrator->hydrate($expectedLineItems, $currency->getIsoCode());
+        return $expectedLineItems;
     }
 
-    public function getExpectedDeliveries(string $taxStatus, ?OrderDeliveryCollection $deliveries = null, CurrencyEntity $currency): array
+    public function getExpectedDeliveries(string $taxStatus, ?OrderDeliveryCollection $deliveries = null, ?CurrencyEntity $currency = null): array
     {
-        $mollieShippingLineItemBuilder = new MollieShippingLineItemBuilder(new PriceCalculator());
+        $mollieShippingLineItemBuilder = new MollieShippingLineItemBuilder(new PriceCalculator(), new MollieOrderPriceBuilder());
 
-        $hydrator = new MollieLineItemHydrator(new MollieOrderPriceBuilder());
-
-        return $hydrator->hydrate($mollieShippingLineItemBuilder->buildShippingLineItems($taxStatus, $deliveries), $currency->getIsoCode());
+        return $mollieShippingLineItemBuilder->buildShippingLineItems($taxStatus, $deliveries, $currency);
     }
 
     public function getDummyLineItems(): OrderLineItemCollection

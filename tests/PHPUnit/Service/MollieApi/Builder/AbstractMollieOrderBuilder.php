@@ -6,7 +6,6 @@ use Kiener\MolliePayments\Facade\MolliePaymentDoPay;
 use Kiener\MolliePayments\Facade\MolliePaymentFinalize;
 use Kiener\MolliePayments\Handler\PaymentHandler;
 use Kiener\MolliePayments\Service\CustomerService;
-use Kiener\MolliePayments\Hydrator\MollieLineItemHydrator;
 use Kiener\MolliePayments\Service\LoggerService;
 use Kiener\MolliePayments\Service\MollieApi\Builder\MollieLineItemBuilder;
 use Kiener\MolliePayments\Service\MollieApi\Builder\MollieOrderAddressBuilder;
@@ -17,7 +16,6 @@ use Kiener\MolliePayments\Service\MollieApi\LineItemDataExtractor;
 use Kiener\MolliePayments\Service\MollieApi\MollieOrderCustomerEnricher;
 use Kiener\MolliePayments\Service\MollieApi\OrderDataExtractor;
 use Kiener\MolliePayments\Service\MollieApi\PriceCalculator;
-use Kiener\MolliePayments\Service\MollieApi\VerticalTaxLineItemFixer;
 use Kiener\MolliePayments\Service\SettingsService;
 use Kiener\MolliePayments\Service\Transition\TransactionTransitionServiceInterface;
 use Kiener\MolliePayments\Setting\MollieSettingStruct;
@@ -160,9 +158,7 @@ abstract class AbstractMollieOrderBuilder extends TestCase
             new MollieOrderAddressBuilder(),
             new MollieOrderCustomerEnricher($this->createMock(CustomerService::class)),
             $this->loggerService,
-            new MollieShippingLineItemBuilder(new PriceCalculator(), new MollieOrderPriceBuilder()),
-            new VerticalTaxLineItemFixer($this->loggerService),
-            new MollieLineItemHydrator(new MollieOrderPriceBuilder())
+            new MollieShippingLineItemBuilder(new PriceCalculator(), new MollieOrderPriceBuilder())
         );
     }
 

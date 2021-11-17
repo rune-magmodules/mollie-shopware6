@@ -32,7 +32,7 @@ const shopware = new Shopware();
 context("Order Status Mapping Tests", () => {
 
     before(function () {
-        configAction.setupShop(false, false, false);
+        configAction.setupShop(false, false);
     })
 
     beforeEach(() => {
@@ -91,7 +91,7 @@ context("Order Status Mapping Tests", () => {
 
             adminLogin.login();
             adminOrders.assertLatestOrderStatus('Open');
-            adminOrders.assertLatestPaymentStatus('Failed');
+            adminOrders.assertLatestPaymentStatus('Cancelled');
         })
 
         it('Test Status Cancelled', () => {
