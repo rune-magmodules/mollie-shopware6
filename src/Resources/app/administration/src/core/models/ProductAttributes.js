@@ -252,4 +252,16 @@ export default class ProductAttributes {
 
         return false;
     }
+
+    /**
+     *
+     * @returns {boolean}
+     */
+    hasSubscriptionData() {
+        if (this._mollieSubscriptionProduct) {
+            return true;
+        }
+
+        return false;
+    }
 }
