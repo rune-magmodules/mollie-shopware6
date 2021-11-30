@@ -26,6 +26,7 @@
     "mollieSubscriptionIntervalAmount": "Zahlung wiederholen alle",
     "mollieSubscriptionIntervalType": "Abonnement-Intervall-Typ",
     "mollieSubscriptionRepetitionAmount": "Zahlung wiederholen",
-    "mollieSubscriptionRepetitionType": "Abonnement-Wiederholungstyp"
+    "mollieSubscriptionRepetitionType": "Abonnement-Wiederholungstyp",
+    "infoDefaultLanguage": "Bitte beachten Sie, dass diese Konfiguration nur in Ihrer Standardsprache bearbeitet werden kann. Bitte ändern Sie Ihre Sprache, um die Abonnementeinstellungen dieses Produkts zu ändern."
   }
 }

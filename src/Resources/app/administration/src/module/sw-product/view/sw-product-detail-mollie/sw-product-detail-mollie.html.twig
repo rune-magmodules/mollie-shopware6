@@ -123,6 +123,12 @@
 
                 </sw-container>
             </sw-container>
+
+                <sw-container columns="1fr" v-if="!isDefaultLanguage">
+                    <sw-alert variant="default" :showIcon="true" :closable="false" class="sw-product-detail-mollie-subscription__inheritance-warning">
+                        {{ $tc('mollie-subscription.infoDefaultLanguage') }}
+                    </sw-alert>
+                </sw-container>
             </sw-container>
         </sw-card>
 {% endblock %}
