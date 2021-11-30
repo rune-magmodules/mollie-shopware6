@@ -31,7 +31,8 @@
       "de-DE": "https://www.mollie.com/contact",
       "en-GB": "https://www.mollie.com/contact",
       "nl-NL": "https://www.mollie.com/contact"
-    }
+    },
+    "plugin-icon": "src/Resources/config/plugin.png"
   },
   "config": {
     "optimize-autoloader": true

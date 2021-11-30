@@ -1,6 +1,7 @@
 {
     "mollie-subscriptions": {
-        "page": {
+      "title": "Mollie-Abonnements",
+      "page": {
             "list": {
                 "columns": {
                     "subscription_id": "ID",

@@ -4,8 +4,8 @@ const { Module } = Shopware;
 
 Module.register('mollie-subscriptions', {
     type: 'plugin',
-    name: 'Mollie Subscriptions',
-    title: 'Mollie Subscriptions',
+    name: 'mollie-subscriptions.title',
+    title: 'mollie-subscriptions.title',
     description: '',
     color: '#9AA8B5',
     icon: 'default-basic-shape-star',

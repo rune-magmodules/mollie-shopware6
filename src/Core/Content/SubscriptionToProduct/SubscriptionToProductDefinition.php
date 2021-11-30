@@ -21,12 +21,14 @@ use Shopware\Core\Framework\DataAbstractionLayer\Field\JsonField;
 
 class SubscriptionToProductDefinition extends EntityDefinition
 {
+    public const ENTITY_NAME = 'mollie_subscription_to_product';
+
     /**
      * @return string
      */
     public function getEntityName(): string
     {
-        return 'mollie_subscription_to_product';
+        return self::ENTITY_NAME;
     }
 
     /**

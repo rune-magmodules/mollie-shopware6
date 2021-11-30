@@ -10,6 +10,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Kiener\MolliePayments\Service\Subscription\CancelSubscriptionsService;
 
+/**
+ * @RouteScope(scopes={"api"})
+ */
 class SubscriptionController extends AbstractController
 {
     /**
