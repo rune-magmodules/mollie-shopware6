@@ -13,7 +13,7 @@
             {% endblock %}
             {% block page_account_mollie_subscriptions_main %}
                 <div class="account-order-main account-mollie-main">
-                    {% if page.subscriptions.total < 0 %}
+                    {% if page.subscriptions.total == 0 %}
                         {% block page_account_mollie_subscriptions_info_empty %}
                             {% sw_include '@Storefront/storefront/utilities/alert.html.twig' with {
                                 type: "warning",
