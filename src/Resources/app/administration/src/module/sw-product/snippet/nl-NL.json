@@ -26,6 +26,7 @@
     "mollieSubscriptionIntervalAmount": "Herhaal betaling elke",
     "mollieSubscriptionIntervalType": "Type abonnementsinterval",
     "mollieSubscriptionRepetitionAmount": "Herhaal betaling",
-    "mollieSubscriptionRepetitionType": "Type abonnementsherhaling"
+    "mollieSubscriptionRepetitionType": "Type abonnementsherhaling",
+    "infoDefaultLanguage": "Let op, deze configuratie kan alleen in uw standaardtaal worden bewerkt. Wijzig uw taal om de abonnementsinstellingen van dit product te wijzigen."
   }
 }

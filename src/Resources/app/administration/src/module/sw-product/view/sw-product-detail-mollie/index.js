@@ -138,6 +138,7 @@ Shopware.Component.register('sw-product-detail-mollie', {
         isDefaultLanguage() {
             return this.languageId === this.systemLanguageId;
         },
+
     },
 
 

@@ -1,7 +1,7 @@
 {
   "name": "kiener/mollie-payments-plugin",
   "description": "Mollie Payments",
-  "version": "v1.5.5",
+  "version": "v1.5.7",
   "type": "shopware-platform-plugin",
   "license": "MIT",
   "authors": [
@@ -31,8 +31,7 @@
       "de-DE": "https://www.mollie.com/contact",
       "en-GB": "https://www.mollie.com/contact",
       "nl-NL": "https://www.mollie.com/contact"
-    },
-    "plugin-icon": "src/Resources/config/plugin.png"
+    }
   },
   "config": {
     "optimize-autoloader": true
@@ -58,7 +57,7 @@
     "shopware/administration": "<6,>=7"
   },
   "require": {
-    "mollie/mollie-api-php": "^2.37"
+    "mollie/mollie-api-php": "^2.39"
   },
   "require-dev": {
     "shopware/core": "*",

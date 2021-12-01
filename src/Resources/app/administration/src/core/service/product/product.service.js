@@ -35,11 +35,11 @@ export default class ProductService {
             product.customFields = {};
         }
 
-        if (!Object.prototype.hasOwnProperty.call(product.customFields, 'mollie_subscription')) {
+        if (!mollieAttributes.hasSubscriptionData() && !Object.prototype.hasOwnProperty.call(product.customFields, 'mollie_subscription')) {
             return;
         }
 
-        // we cannot simply delete the mollie_payments node in our custom fields using the API in the Shopware Admin.
+        // we cannot simply delete the mollie_subscription node in our custom fields using the API in the Shopware Admin.
         // so we make sure to at least have a valid but maybe "empty" structure in it
         product.customFields.mollie_subscription = mollieAttributes.toArraySubscription();
     }

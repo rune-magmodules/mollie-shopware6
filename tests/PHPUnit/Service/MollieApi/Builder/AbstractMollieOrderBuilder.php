@@ -6,7 +6,7 @@ use Kiener\MolliePayments\Facade\MolliePaymentDoPay;
 use Kiener\MolliePayments\Facade\MolliePaymentFinalize;
 use Kiener\MolliePayments\Handler\PaymentHandler;
 use Kiener\MolliePayments\Service\CustomerService;
-use Kiener\MolliePayments\Service\LoggerService;
+use Kiener\MolliePayments\Hydrator\MollieLineItemHydrator;
 use Kiener\MolliePayments\Service\MollieApi\Builder\MollieLineItemBuilder;
 use Kiener\MolliePayments\Service\MollieApi\Builder\MollieOrderAddressBuilder;
 use Kiener\MolliePayments\Service\MollieApi\Builder\MollieOrderBuilder;
@@ -16,6 +16,7 @@ use Kiener\MolliePayments\Service\MollieApi\LineItemDataExtractor;
 use Kiener\MolliePayments\Service\MollieApi\MollieOrderCustomerEnricher;
 use Kiener\MolliePayments\Service\MollieApi\OrderDataExtractor;
 use Kiener\MolliePayments\Service\MollieApi\PriceCalculator;
+use Kiener\MolliePayments\Service\MollieApi\VerticalTaxLineItemFixer;
 use Kiener\MolliePayments\Service\SettingsService;
 use Kiener\MolliePayments\Service\Transition\TransactionTransitionServiceInterface;
 use Kiener\MolliePayments\Setting\MollieSettingStruct;
@@ -24,6 +25,8 @@ use MolliePayments\Tests\Fakes\FakeCompatibilityGateway;
 use MolliePayments\Tests\Traits\OrderTrait;
 use MolliePayments\Tests\Utils\Traits\PaymentBuilderTrait;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Shopware\Core\Checkout\Customer\Aggregate\CustomerAddress\CustomerAddressEntity;
 use Shopware\Core\Checkout\Customer\CustomerEntity;
 use Shopware\Core\Framework\Uuid\Uuid;
@@ -42,7 +45,7 @@ abstract class AbstractMollieOrderBuilder extends TestCase
      */
     protected $settingsService;
     /**
-     * @var LoggerService|\PHPUnit\Framework\MockObject\MockObject
+     * @var LoggerInterface
      */
     protected $loggerService;
     /**
@@ -130,8 +133,9 @@ abstract class AbstractMollieOrderBuilder extends TestCase
         ]);
         $this->settingsService->method('getSettings')->willReturn($this->settingStruct);
 
-        /** @var LoggerService loggerService */
-        $this->loggerService = $this->getMockBuilder(LoggerService::class)->disableOriginalConstructor()->getMock();
+
+        $this->loggerService = new NullLogger();
+
         /** @var SalesChannelContext salesChannelContext */
         $this->salesChannelContext = $this->getMockBuilder(SalesChannelContext::class)->disableOriginalConstructor()->getMock();
         /** @var Router router */
@@ -158,7 +162,9 @@ abstract class AbstractMollieOrderBuilder extends TestCase
             new MollieOrderAddressBuilder(),
             new MollieOrderCustomerEnricher($this->createMock(CustomerService::class)),
             $this->loggerService,
-            new MollieShippingLineItemBuilder(new PriceCalculator(), new MollieOrderPriceBuilder())
+            new MollieShippingLineItemBuilder(new PriceCalculator(), new MollieOrderPriceBuilder()),
+            new VerticalTaxLineItemFixer($this->loggerService),
+            new MollieLineItemHydrator(new MollieOrderPriceBuilder())
         );
     }
 
